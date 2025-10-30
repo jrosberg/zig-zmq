@@ -20,9 +20,10 @@ Note that this is an experimental implementation intended for learning and explo
 
 ## Installation
 
-```bash
+```shell
+
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/jrosberg/zig-zmq.git
 cd zmq.zig
 
 # Build the project
