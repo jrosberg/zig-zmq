@@ -210,7 +210,6 @@ pub const Mechanism = enum {
         if (trimmed.len == 0)
             return .null;
 
-        std.debug.print("Unknown mechanism: '{s}' (bytes: {x})\n", .{ trimmed, data });
         return ZmtpError.mechanism;
     }
 };

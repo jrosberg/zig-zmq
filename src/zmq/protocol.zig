@@ -41,7 +41,6 @@ pub const Greeting = struct {
         greet.version.@"0" = s[10];
         greet.version.@"1" = s[11];
         const mech = zmtp.Mechanism.from(s[12..31]) catch |err| {
-            std.debug.print("Error: {any}\n", .{err});
             return err;
         };
         greet.mechanism = mech;
@@ -80,14 +79,10 @@ pub const ZmqCommand = struct {
         }
     }
 
-    pub fn ready(socket: SocketType) ZmqCommand {
+    pub fn ready(socket: SocketType) !ZmqCommand {
         const hmap = std.StringHashMap([]const u8);
         var map = hmap.init(map_allocator.?);
-        map.put("Socket-Type", socket.asString()) catch |err| {
-            std.debug.print("Error: {any}\n", .{err});
-        };
-
-        //std.log.info("map: {any}\n", .{map});
+        try map.put("Socket-Type", socket.asString());
 
         return ZmqCommand{
             .name = ZmqCommandName.READY,
@@ -238,7 +233,7 @@ test "ZmqCommand ready creation and operations" {
 
     // Test 1: Create READY command
     {
-        var cmd = ZmqCommand.ready(.PUB);
+        var cmd = try ZmqCommand.ready(.PUB);
         defer cmd.deinit();
 
         try testing.expectEqual(ZmqCommandName.READY, cmd.name);
@@ -251,7 +246,7 @@ test "ZmqCommand ready creation and operations" {
 
     // Test 2: Convert to frame
     {
-        var cmd = ZmqCommand.ready(.REQ);
+        var cmd = try ZmqCommand.ready(.REQ);
         defer cmd.deinit();
 
         const frame = cmd.toFrame();
@@ -264,7 +259,7 @@ test "ZmqCommand ready creation and operations" {
 
     // Test 3: Parse from slice
     {
-        var cmd1 = ZmqCommand.ready(.SUB);
+        var cmd1 = try ZmqCommand.ready(.SUB);
         defer cmd1.deinit();
 
         const frame = cmd1.toFrame();
