@@ -33,6 +33,26 @@ zig build
 zig build test
 ```
 
+## Usage
+
+1. Add `zig-zmq` as a dependency in your Zig project.
+
+```shell
+# get latest version
+zig fetch --save git+https://github.com/jrosberg/zig-zmq.git
+```
+2. add `zmq` to your `build.zig` dependencies:
+
+```zig
+const zmq = b.dependency("zmq_zig", .{
+    .target = target,
+    .optimize = optimize,
+});
+
+// Replace `exe` with your actual library or executable
+exe.root_module.addImport("zmq", zmq.artifact("zmq_zig").root_module);
+```
+
 ## Quick Start
 
 ### REQ/REP Pattern (Request-Reply)
